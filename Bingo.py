@@ -1,5 +1,6 @@
 import tkinter as tk
 import random
+from tkinter import messagebox
 
 root = tk.Tk()
 root.title("Bingo Surdo")
@@ -16,6 +17,8 @@ def gerar_cartela():
         'G': random.sample(range(46, 61), 5),
         'O': random.sample(range(61, 76), 5)
     }
+    # Inserindo espaço "FREE" na posição central da coluna N
+    colunas['N'][2] = "FREE"
     return colunas
 
 def sortear_numero():
@@ -32,12 +35,21 @@ def sortear_numero():
     sorteado_label.config(text=f"Número sorteado: {numero}")
     historico_label.config(text=f"Sorteados: {sorted(numeros_sorteados)}")
 
+    # Marcar automaticamente se o número está na cartela
+    if numero in botoes_cartela:
+        botao = botoes_cartela[numero]
+        botao.config(bg="green", fg="white", state="disabled")
+
 def checar_numero(numero, botao):
+    if numero not in numeros_sorteados:
+        messagebox.showinfo("Atenção", f"O número {numero} ainda não foi sorteado!")
+        return
+
     cor_atual = botao.cget("bg")
     if cor_atual == "green":
         return  # já marcado
-    if numero in numeros_sorteados:
-        botao.config(bg="green", fg="white")
+
+    botao.config(bg="green", fg="white", state="disabled")
 
 cartela = gerar_cartela()
 
@@ -54,11 +66,17 @@ for i, letra in enumerate(letras):
 
 for col_idx, letra in enumerate(letras):
     for row_idx, numero in enumerate(cartela[letra]):
-        botao = tk.Button(
-            frame_cartela, text=str(numero), width=5, height=2, font=("Arial", 12),
-            command=lambda n=numero: checar_numero(n, botoes_cartela[n])
-        )
-        botoes_cartela[numero] = botao
+        if numero == "FREE":
+            botao = tk.Button(
+                frame_cartela, text=numero, width=5, height=2, font=("Arial", 12),
+                bg="green", fg="white", state="disabled"
+            )
+        else:
+            botao = tk.Button(
+                frame_cartela, text=str(numero), width=5, height=2, font=("Arial", 12),
+                command=lambda n=numero, b=None: checar_numero(n, botoes_cartela[n])
+            )
+            botoes_cartela[numero] = botao
         botao.grid(row=row_idx + 1, column=col_idx, padx=2, pady=2)
 
 sorteado_label = tk.Label(root, text="Número sorteado: ", font=("Arial", 14), bg="#f0f0f0")

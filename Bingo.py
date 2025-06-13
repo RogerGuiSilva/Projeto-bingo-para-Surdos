@@ -2,9 +2,9 @@ import tkinter as tk
 import random
 from tkinter import messagebox
 
-root = tk.Tk()
-root.title("Bingo Surdo")
-root.configure(bg="#f0f0f0")
+TLR = tk.Tk()
+TLR.title("Bingo Surdo")
+TLR.configure(bg="#f0f0f0")
 
 numeros_sorteados = []
 botoes_cartela = {}
@@ -17,7 +17,6 @@ def gerar_cartela():
         'G': random.sample(range(46, 61), 5),
         'O': random.sample(range(61, 76), 5)
     }
-    # Inserindo espaço "FREE" na posição central da coluna N
     colunas['N'][2] = "FREE"
     return colunas
 
@@ -35,7 +34,6 @@ def sortear_numero():
     sorteado_label.config(text=f"Número sorteado: {numero}")
     historico_label.config(text=f"Sorteados: {sorted(numeros_sorteados)}")
 
-    # Marcar automaticamente se o número está na cartela
     if numero in botoes_cartela:
         botao = botoes_cartela[numero]
         botao.config(bg="green", fg="white", state="disabled")
@@ -47,16 +45,16 @@ def checar_numero(numero, botao):
 
     cor_atual = botao.cget("bg")
     if cor_atual == "green":
-        return  # já marcado
+        return
 
     botao.config(bg="green", fg="white", state="disabled")
 
 cartela = gerar_cartela()
 
-titulo = tk.Label(root, text="B I N G O", font=("Arial Black", 24), bg="#f0f0f0")
+titulo = tk.Label(TLR, text="B I N G O", font=("Arial Black", 24), bg="#f0f0f0")
 titulo.pack(pady=10)
 
-frame_cartela = tk.Frame(root, bg="#f0f0f0")
+frame_cartela = tk.Frame(TLR, bg="#f0f0f0")
 frame_cartela.pack()
 
 letras = ['B', 'I', 'N', 'G', 'O']
@@ -79,13 +77,14 @@ for col_idx, letra in enumerate(letras):
             botoes_cartela[numero] = botao
         botao.grid(row=row_idx + 1, column=col_idx, padx=2, pady=2)
 
-sorteado_label = tk.Label(root, text="Número sorteado: ", font=("Arial", 14), bg="#f0f0f0")
+sorteado_label = tk.Label(TLR, text="Número sorteado: ", font=("Arial", 14), bg="#f0f0f0")
 sorteado_label.pack(pady=10)
 
-sortear_button = tk.Button(root, text="Sortear Número", command=sortear_numero, font=("Arial", 12))
+sortear_button = tk.Button(TLR, text="Sortear Número", command=sortear_numero, font=("Arial", 12))
 sortear_button.pack(pady=10)
 
-historico_label = tk.Label(root, text="Sorteados: []", font=("Arial", 10), bg="#f0f0f0")
+historico_label = tk.Label(TLR, text="Sorteados: []", font=("Arial", 10), bg="#f0f0f0")
 historico_label.pack(pady=10)
 
-root.mainloop()
+TLR.mainloop()
+      
